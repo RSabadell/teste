@@ -28,6 +28,20 @@ df_filtered = df[
     (df["VALOR_FINAL"] <= valor_range[1])
 ].copy()
 
+# Lista completa de UFs e nomes
+uf_para_nome_estado = {
+    "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
+    "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão",
+    "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará",
+    "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro",
+    "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
+    "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
+}
+
+# Adicionar filtro de estado na barra lateral
+lista_ufs = sorted(uf_para_nome_estado.keys())
+selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
+
 # Discretização ordenada
 for var in ["CARENCIA", "QTD_PARCELA"]:
     ordenado = sorted(df_filtered[var].dropna().unique().astype(int))
