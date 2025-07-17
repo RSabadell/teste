@@ -118,3 +118,59 @@ st.download_button(
     file_name="financiamentos_filtrados.csv",
     mime="text/csv"
 )
+
+st.subheader("🗺️ Análise Regional por Estado")
+
+# Converter ESTADO para string e garantir consistência
+df_filtered["ESTADO"] = df_filtered["ESTADO"].astype(str).str.upper()
+
+# Contagem de contratos por estado
+contratos_por_estado = df_filtered.groupby("ESTADO").size().reset_index(name="Contratos")
+
+# Taxa média por estado
+taxa_media_estado = df_filtered.groupby("ESTADO")["TAXA_CLIENTE"].mean().reset_index(name="Taxa_Média")
+
+# Distribuição por banco (quantidade por banco por estado)
+banco_estado = df_filtered.groupby(["ESTADO", "BANCO_VENCEDOR"]).size().reset_index(name="Qtd")
+
+# -------------------------------
+# Mapa 1: Número de contratos por estado
+fig_mapa1 = px.choropleth(
+    contratos_por_estado,
+    locations="ESTADO",
+    locationmode="USA-states",
+    color="Contratos",
+    color_continuous_scale="Blues",
+    scope="south america",
+    labels={"ESTADO": "UF"},
+    title="Número de Contratos por Estado",
+)
+st.plotly_chart(fig_mapa1)
+
+# -------------------------------
+# Mapa 2: Taxa média por estado
+fig_mapa2 = px.choropleth(
+    taxa_media_estado,
+    locations="ESTADO",
+    locationmode="USA-states",
+    color="Taxa_Média",
+    color_continuous_scale="Reds",
+    scope="south america",
+    labels={"ESTADO": "UF"},
+    title="Taxa Média por Estado",
+)
+st.plotly_chart(fig_mapa2)
+
+# -------------------------------
+# Gráfico 3: Distribuição de bancos por estado
+st.subheader("🏦 Distribuição de Bancos por Estado")
+
+fig_barras = px.bar(
+    banco_estado,
+    x="ESTADO",
+    y="Qtd",
+    color="BANCO_VENCEDOR",
+    barmode="group",
+    title="Quantidade de Contratos por Banco e Estado"
+)
+st.plotly_chart(fig_barras)
