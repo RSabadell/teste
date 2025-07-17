@@ -67,7 +67,6 @@ sns.histplot(
     bins=30,
     kde=True,
     bw_adjust=0.25,
-    common_norm=False,
     alpha=0.6,
     ax=ax2
 )
