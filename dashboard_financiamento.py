@@ -61,6 +61,7 @@ var_hist = st.selectbox("Selecione a variável para o histograma:", variaveis)
 stat = st.radio("Eixo Y:", ["density", "count"], index=0)
 common_norm = st.checkbox("Normalizar todos os bancos juntos (common_norm=True)", value=True)
 multiple_option = st.selectbox("Modo de sobreposição das distribuições:",["layer", "stack", "dodge", "fill"],  index=0)
+is_discrete = st.checkbox("Tratar variável como discreta (discrete=True)", value=False)
 
 fig2, ax2 = plt.subplots(figsize=(5,3))
 sns.histplot(
@@ -72,6 +73,7 @@ sns.histplot(
     stat=stat,
     common_norm=common_norm,
     multiple=multiple_option,
+    discrete=is_discrete,
     alpha=0.6,
     ax=ax2
 )
