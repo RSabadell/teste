@@ -22,10 +22,30 @@ bancos = df["BANCO_VENCEDOR"].dropna().unique().tolist()
 selected_bancos = st.sidebar.multiselect("Banco vencedor", bancos, default=bancos)
 
 valor_range = st.sidebar.slider("Valor final do financiamento", 0, 70000, (0, 70000), step=1000)
+
+# -------------------------------
+# Seção: Mapa Interativo por Estado (Brasil) com filtro e mapa completo
+# -------------------------------
+
+# Lista completa de UFs e nomes
+uf_para_nome_estado = {
+    "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
+    "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão",
+    "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará",
+    "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro",
+    "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
+    "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
+}
+
+# Adicionar filtro de estado na barra lateral
+lista_ufs = sorted(uf_para_nome_estado.keys())
+selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
+
 df_filtered = df[
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
     (df["VALOR_FINAL"] >= valor_range[0]) &
-    (df["VALOR_FINAL"] <= valor_range[1])
+    (df["VALOR_FINAL"] <= valor_range[1]) &
+    (df["ESTADO"].isin(selected_ufs))
 ].copy()
 
 # Discretização ordenada
@@ -84,25 +104,7 @@ sns.histplot(
 )
 st.pyplot(fig2)
 
-
-# -------------------------------
-# Seção: Mapa Interativo por Estado (Brasil) com filtro e mapa completo
-# -------------------------------
 st.subheader("🗺️ Análise Regional por Estado")
-
-# Lista completa de UFs e nomes
-uf_para_nome_estado = {
-    "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
-    "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão",
-    "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará",
-    "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro",
-    "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
-    "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
-}
-
-# Adicionar filtro de estado na barra lateral
-lista_ufs = sorted(uf_para_nome_estado.keys())
-selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
 
 # Mapear UFs para nomes e filtrar dados
 df_filtered["ESTADO"] = df_filtered["ESTADO"].astype(str).str.upper()
