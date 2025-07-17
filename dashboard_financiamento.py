@@ -23,7 +23,6 @@ selected_bancos = st.sidebar.multiselect("Banco vencedor", bancos, default=banco
 
 valor_range = st.sidebar.slider("Valor final do financiamento", 0, 70000, (0, 70000), step=1000)
 
-st.sidebar.markdown("### 📝 Tipo de Proposta")
 escolhido_opcao = st.sidebar.radio("Proposta escolhida?", ["Todos", "Sim", "Não"], index=0)
 
 # -------------------------------
