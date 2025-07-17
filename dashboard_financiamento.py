@@ -33,8 +33,17 @@ df_filtered = df[
 ].copy()
 
 # Transformar CARENCIA e QTD_PARCELA em categorias, para evitar lacunas no histograma
-df_filtered["CARENCIA_LABEL"] = df_filtered["CARENCIA"].astype(int).astype(str)
-df_filtered["QTD_PARCELA_LABEL"] = df_filtered["QTD_PARCELA"].astype(int).astype(str)
+df_filtered["CARENCIA_LABEL"] = pd.Categorical(
+    df_filtered["CARENCIA"].astype(int).astype(str),
+    categories=sorted(df_filtered["CARENCIA"].dropna().unique().astype(int).astype(str)),
+    ordered=True
+)
+
+df_filtered["QTD_PARCELA_LABEL"] = pd.Categorical(
+    df_filtered["QTD_PARCELA"].astype(int).astype(str),
+    categories=sorted(df_filtered["QTD_PARCELA"].dropna().unique().astype(int).astype(str)),
+    ordered=True
+)
 
 # Seção: Resumo estatístico por banco
 st.subheader("📊 Resumo Estatístico por Banco")
