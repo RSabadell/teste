@@ -61,11 +61,7 @@ st.pyplot(fig1)
 
 # Seção: Histogramas por variável
 st.subheader("📈 Distribuição de Variáveis por Banco")
-
-var_hist = st.selectbox("Variável para o histograma:", variaveis)
-
-# Configurações visuais
-bw = st.slider("Suavização (bandwidth - bw_adjust)", 0.1, 2.0, 1.0, step=0.1)
+var_hist = st.selectbox("Selecione a variável para o histograma:", variaveis)
 stat = st.radio("Eixo Y:", ["density", "count"], index=0)
 common_norm = st.checkbox("Normalizar todos os bancos juntos (common_norm=True)", value=True)
 multiple_option = st.selectbox(
@@ -90,9 +86,8 @@ sns.histplot(
     data=df_filtered,
     x=var_hist_plot,
     hue="BANCO_VENCEDOR",
-    bins=30 if not use_discrete else None,
-    kde=kde,
-    bw_adjust=bw if bw else None,
+    bins=30,
+    kde=True,
     stat=stat,
     common_norm=common_norm,
     multiple=multiple_option,
