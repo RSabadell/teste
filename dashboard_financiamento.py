@@ -11,7 +11,7 @@ st.title("📊 Dashboard Interativo de Financiamentos")
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("dataset_financiamentos_filtrado.csv")
+    return pd.read_csv("dataset_financiamentos_completo_filtrado_corrigido.csv")
 
 df = load_data()
 
@@ -27,20 +27,6 @@ df_filtered = df[
     (df["VALOR_FINAL"] >= valor_range[0]) &
     (df["VALOR_FINAL"] <= valor_range[1])
 ].copy()
-
-# Lista completa de UFs e nomes
-uf_para_nome_estado = {
-    "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
-    "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão",
-    "MT": "Mato Grosso", "MS": "Mato Grosso do Sul", "MG": "Minas Gerais", "PA": "Pará",
-    "PB": "Paraíba", "PR": "Paraná", "PE": "Pernambuco", "PI": "Piauí", "RJ": "Rio de Janeiro",
-    "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
-    "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
-}
-
-# Adicionar filtro de estado na barra lateral
-lista_ufs = sorted(uf_para_nome_estado.keys())
-selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
 
 # Discretização ordenada
 for var in ["CARENCIA", "QTD_PARCELA"]:
@@ -69,6 +55,7 @@ st.pyplot(fig1)
 # Histograma com controles
 st.subheader("📈 Histograma por Banco")
 var_hist = st.selectbox("Variável para o histograma", variaveis, index=4)
+bw = st.slider("Suavização (bw_adjust)", 0.1, 2.0, 1.0, 0.1)
 stat = st.radio("Eixo Y", ["density", "count"], index=0)
 common_norm = st.checkbox("Normalização comum entre bancos", value=True)
 multiple_option = st.selectbox("Modo de sobreposição", ["layer", "stack", "dodge", "fill"], index=0)
@@ -89,6 +76,7 @@ sns.histplot(
     x=var_hist_plot,
     hue="BANCO_VENCEDOR",
     kde=kde,
+    bw_adjust=bw if bw else None,
     stat=stat,
     multiple=multiple_option,
     common_norm=common_norm,
@@ -98,13 +86,13 @@ sns.histplot(
 )
 st.pyplot(fig2)
 
+
 # -------------------------------
-# Mapa Interativo do Brasil com GeoJSON
+# Seção: Mapa Interativo por Estado (Brasil) com filtro e mapa completo
 # -------------------------------
 st.subheader("🗺️ Análise Regional por Estado")
 
-# Converter ESTADO e mapear para nomes
-df_filtered["ESTADO"] = df_filtered["ESTADO"].astype(str).str.upper()
+# Lista completa de UFs e nomes
 uf_para_nome_estado = {
     "AC": "Acre", "AL": "Alagoas", "AP": "Amapá", "AM": "Amazonas", "BA": "Bahia", "CE": "Ceará",
     "DF": "Distrito Federal", "ES": "Espírito Santo", "GO": "Goiás", "MA": "Maranhão",
@@ -113,13 +101,35 @@ uf_para_nome_estado = {
     "RN": "Rio Grande do Norte", "RS": "Rio Grande do Sul", "RO": "Rondônia", "RR": "Roraima",
     "SC": "Santa Catarina", "SP": "São Paulo", "SE": "Sergipe", "TO": "Tocantins"
 }
-df_filtered["ESTADO_NOME"] = df_filtered["ESTADO"].map(uf_para_nome_estado)
 
+# Adicionar filtro de estado na barra lateral
+lista_ufs = sorted(uf_para_nome_estado.keys())
+selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
+
+# Mapear UFs para nomes e filtrar dados
+df_filtered["ESTADO"] = df_filtered["ESTADO"].astype(str).str.upper()
+df_filtered["ESTADO_NOME"] = df_filtered["ESTADO"].map(uf_para_nome_estado)
+df_estado_filtrado = df_filtered[df_filtered["ESTADO"].isin(selected_ufs)]
+
+# GeoJSON
 geojson_url = "https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson"
 geojson_estados = requests.get(geojson_url).json()
 
-# Mapa: contratos por estado
-contratos_estado = df_filtered.groupby("ESTADO_NOME").size().reset_index(name="Contratos")
+# DataFrame base com todos os estados (para garantir exibição no mapa)
+todos_estados_df = pd.DataFrame({
+    "ESTADO": lista_ufs,
+    "ESTADO_NOME": [uf_para_nome_estado[uf] for uf in lista_ufs]
+})
+
+# Contratos por estado (incluindo estados sem dados)
+contratos_estado = df_estado_filtrado.groupby("ESTADO_NOME").size().reset_index(name="Contratos")
+contratos_estado = todos_estados_df.merge(contratos_estado, on="ESTADO_NOME", how="left").fillna(0)
+
+# Taxa média por estado
+taxa_estado = df_estado_filtrado.groupby("ESTADO_NOME")["TAXA_CLIENTE"].mean().reset_index(name="Taxa_Média")
+taxa_estado = todos_estados_df.merge(taxa_estado, on="ESTADO_NOME", how="left")
+
+# Mapa: Contratos
 fig_mapa1 = px.choropleth(
     contratos_estado, geojson=geojson_estados, featureidkey="properties.name",
     locations="ESTADO_NOME", color="Contratos", color_continuous_scale="Blues",
@@ -128,8 +138,7 @@ fig_mapa1 = px.choropleth(
 fig_mapa1.update_geos(fitbounds="locations", visible=False)
 st.plotly_chart(fig_mapa1)
 
-# Mapa: taxa média por estado
-taxa_estado = df_filtered.groupby("ESTADO_NOME")["TAXA_CLIENTE"].mean().reset_index(name="Taxa_Média")
+# Mapa: Taxa média
 fig_mapa2 = px.choropleth(
     taxa_estado, geojson=geojson_estados, featureidkey="properties.name",
     locations="ESTADO_NOME", color="Taxa_Média", color_continuous_scale="Reds",
@@ -138,7 +147,16 @@ fig_mapa2 = px.choropleth(
 fig_mapa2.update_geos(fitbounds="locations", visible=False)
 st.plotly_chart(fig_mapa2)
 
-# Barras: distribuição de bancos por estado
+# Gráfico de barras por banco/estado
+st.subheader("🏦 Distribuição de Bancos por Estado")
+banco_estado = df_estado_filtrado.groupby(["ESTADO", "BANCO_VENCEDOR"]).size().reset_index(name="Qtd")
+fig_barras = px.bar(
+    banco_estado, x="ESTADO", y="Qtd", color="BANCO_VENCEDOR",
+    barmode="group", title="Contratos por Banco e Estado"
+)
+st.plotly_chart(fig_barras)
+
+
 st.subheader("🏦 Distribuição de Bancos por Estado")
 banco_estado = df_filtered.groupby(["ESTADO", "BANCO_VENCEDOR"]).size().reset_index(name="Qtd")
 fig_barras = px.bar(
