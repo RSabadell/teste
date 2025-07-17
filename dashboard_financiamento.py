@@ -66,6 +66,8 @@ sns.histplot(
     hue="BANCO_VENCEDOR",
     bins=30,
     kde=True,
+    stat="density",
+    common_norm=False
     alpha=0.6,
     ax=ax2
 )
