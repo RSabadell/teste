@@ -59,7 +59,7 @@ st.pyplot(fig1)
 st.subheader("📈 Distribuição de Variáveis por Banco")
 var_hist = st.selectbox("Selecione a variável para o histograma:", variaveis)
 stat = st.radio("Eixo Y:", ["density", "count"], index=0)
-norm=st.radio("Eixo Y:", ["True", "False"], index=0)
+common_norm = st.checkbox("Normalizar todos os bancos juntos (common_norm=True)", value=True)
 
 fig2, ax2 = plt.subplots(figsize=(5,3))
 sns.histplot(
@@ -69,7 +69,7 @@ sns.histplot(
     bins=30,
     kde=True,
     stat=stat,
-    common_norm=norm,
+    common_norm=common_norm,
     alpha=0.6,
     ax=ax2
 )
