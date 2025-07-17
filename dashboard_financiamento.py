@@ -44,7 +44,7 @@ st.subheader("🔍 Análise Bivariada entre Variáveis")
 x_var = st.selectbox("Eixo X:", variaveis, index=0)
 y_var = st.selectbox("Eixo Y:", variaveis, index=1)
 
-fig1, ax1 = plt.subplots()
+fig1, ax1 = plt.subplots(figsize=(6,4))
 sns.scatterplot(
     data=df_filtered,
     x=x_var,
@@ -59,7 +59,7 @@ st.pyplot(fig1)
 st.subheader("📈 Distribuição de Variáveis por Banco")
 var_hist = st.selectbox("Selecione a variável para o histograma:", variaveis)
 
-fig2, ax2 = plt.subplots()
+fig2, ax2 = plt.subplots(figsize=(6,4))
 sns.histplot(
     data=df_filtered,
     x=var_hist,
