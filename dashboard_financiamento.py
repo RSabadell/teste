@@ -23,6 +23,9 @@ selected_bancos = st.sidebar.multiselect("Banco vencedor", bancos, default=banco
 
 valor_range = st.sidebar.slider("Valor final do financiamento", 0, 70000, (0, 70000), step=1000)
 
+st.sidebar.markdown("### 📝 Tipo de Proposta")
+escolhido_opcao = st.sidebar.radio("Proposta escolhida?", ["Todos", "Sim", "Não"], index=0)
+
 # -------------------------------
 # Seção: Mapa Interativo por Estado (Brasil) com filtro e mapa completo
 # -------------------------------
@@ -46,6 +49,11 @@ if "Selecionar todos" in selected_ufs_opcao:
     selected_ufs = lista_ufs
 else:
     selected_ufs = selected_ufs_opcao
+
+if escolhido_opcao != "Todos":
+    df_filtered = df[df["ESCOLHIDO"] == escolhido_opcao].copy()
+else:
+    df_filtered = df.copy()
 
 df_filtered = df[
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
