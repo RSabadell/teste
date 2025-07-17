@@ -33,8 +33,8 @@ df_filtered = df[
 ].copy()
 
 # Transformar CARENCIA e QTD_PARCELA em categorias, para evitar lacunas no histograma
-df_filtered["CARENCIA_LABEL"] = df_filtered["CARENCIA"].astype(str)
-df_filtered["QTD_PARCELA_LABEL"] = df_filtered["QTD_PARCELA"].astype(str)
+df_filtered["CARENCIA_LABEL"] = df_filtered["CARENCIA"].astype(int).astype(str)
+df_filtered["QTD_PARCELA_LABEL"] = df_filtered["QTD_PARCELA"].astype(int).astype(str)
 
 # Seção: Resumo estatístico por banco
 st.subheader("📊 Resumo Estatístico por Banco")
@@ -48,7 +48,7 @@ st.subheader("🔍 Análise Bivariada entre Variáveis")
 x_var = st.selectbox("Eixo X:", variaveis, index=0)
 y_var = st.selectbox("Eixo Y:", variaveis, index=1)
 
-fig1, ax1 = plt.subplots(figsize=(6, 4))
+fig1, ax1 = plt.subplots(figsize=(5, 3))
 sns.scatterplot(
     data=df_filtered,
     x=x_var,
@@ -84,7 +84,7 @@ else:
     use_discrete = False
     kde = True
 
-fig2, ax2 = plt.subplots(figsize=(6, 4))
+fig2, ax2 = plt.subplots(figsize=(5, 3))
 sns.histplot(
     data=df_filtered,
     x=var_hist_plot,
