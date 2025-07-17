@@ -11,7 +11,7 @@ st.title("📊 Dashboard Interativo de Financiamentos")
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("dataset_financiamentos_completo_filtrado_corrigido.csv")
+    return pd.read_csv("dataset_financiamentos_filtrado.csv")
 
 df = load_data()
 
@@ -48,14 +48,13 @@ st.subheader("📉 Análise Bivariada (Dispersão)")
 x_var = st.selectbox("Variável X", variaveis, index=0)
 y_var = st.selectbox("Variável Y", variaveis, index=4)
 
-fig1, ax1 = plt.subplots(figsize=(6, 4))
+fig1, ax1 = plt.subplots(figsize=(5, 3))
 sns.scatterplot(data=df_filtered, x=x_var, y=y_var, hue="BANCO_VENCEDOR", alpha=0.6, ax=ax1)
 st.pyplot(fig1)
 
 # Histograma com controles
 st.subheader("📈 Histograma por Banco")
 var_hist = st.selectbox("Variável para o histograma", variaveis, index=4)
-bw = st.slider("Suavização (bw_adjust)", 0.1, 2.0, 1.0, 0.1)
 stat = st.radio("Eixo Y", ["density", "count"], index=0)
 common_norm = st.checkbox("Normalização comum entre bancos", value=True)
 multiple_option = st.selectbox("Modo de sobreposição", ["layer", "stack", "dodge", "fill"], index=0)
@@ -70,13 +69,12 @@ else:
     use_discrete = False
     kde = True
 
-fig2, ax2 = plt.subplots(figsize=(6, 4))
+fig2, ax2 = plt.subplots(figsize=(5, 3))
 sns.histplot(
     data=df_filtered,
     x=var_hist_plot,
     hue="BANCO_VENCEDOR",
     kde=kde,
-    bw_adjust=bw if bw else None,
     stat=stat,
     multiple=multiple_option,
     common_norm=common_norm,
