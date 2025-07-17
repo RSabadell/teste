@@ -58,6 +58,8 @@ st.pyplot(fig1)
 # Seção: Histogramas por variável
 st.subheader("📈 Distribuição de Variáveis por Banco")
 var_hist = st.selectbox("Selecione a variável para o histograma:", variaveis)
+stat = st.radio("Eixo Y:", ["density", "count"], index=0)
+norm=st.radio("Eixo Y:", ["True", "False"], index=0)
 
 fig2, ax2 = plt.subplots(figsize=(5,3))
 sns.histplot(
@@ -66,8 +68,8 @@ sns.histplot(
     hue="BANCO_VENCEDOR",
     bins=30,
     kde=True,
-    stat="density",
-    common_norm=False,
+    stat=stat,
+    common_norm=norm,
     alpha=0.6,
     ax=ax2
 )
