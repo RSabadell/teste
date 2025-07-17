@@ -133,7 +133,7 @@ contratos_estado = todos_estados_df.merge(contratos_estado, on="ESTADO_NOME", ho
 
 # Taxa média por estado
 taxa_estado = df_estado_filtrado.groupby("ESTADO_NOME")["TAXA_CLIENTE"].mean().reset_index(name="Taxa_Média")
-taxa_estado = todos_estados_df.merge(taxa_estado, on="ESTADO_NOME", how="left")
+taxa_estado = todos_estados_df.merge(taxa_estado, on="ESTADO_NOME", how="left").fillna(0)
 
 # Mapa: Contratos
 fig_mapa1 = px.choropleth(
