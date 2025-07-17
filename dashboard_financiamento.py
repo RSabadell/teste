@@ -39,7 +39,13 @@ uf_para_nome_estado = {
 
 # Adicionar filtro de estado na barra lateral
 lista_ufs = sorted(uf_para_nome_estado.keys())
-selected_ufs = st.sidebar.multiselect("Estado (UF)", lista_ufs, default=lista_ufs)
+todos_estados_opcao = ["Selecionar todos"] + lista_ufs
+selected_ufs_opcao = st.sidebar.multiselect("Estado (UF)", todos_estados_opcao, default=todos_estados_opcao)
+
+if "Selecionar todos" in selected_ufs_opcao:
+    selected_ufs = lista_ufs
+else:
+    selected_ufs = selected_ufs_opcao
 
 df_filtered = df[
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
