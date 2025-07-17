@@ -71,7 +71,7 @@ sns.histplot(
     kde=True,
     stat=stat,
     common_norm=common_norm,
-    multiple=multiple_option
+    multiple=multiple_option,
     alpha=0.6,
     ax=ax2
 )
