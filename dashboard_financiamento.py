@@ -54,7 +54,8 @@ filtro = (
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
     (df["VALOR_FINAL"] >= valor_range[0]) &
     (df["VALOR_FINAL"] <= valor_range[1]) &
-    (df["ESTADO"].isin(selected_ufs))
+    (df["ESTADO"].isin(selected_ufs)) &
+    (df["TAXA_CLIENTE"]>0)&
 )
 
 if escolhido_opcao != "Todos":
