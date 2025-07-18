@@ -50,12 +50,12 @@ else:
     selected_ufs = selected_ufs_opcao
 
 
-filtro = df[
+filtro = (
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
     (df["VALOR_FINAL"] >= valor_range[0]) &
     (df["VALOR_FINAL"] <= valor_range[1]) &
     (df["ESTADO"].isin(selected_ufs))
-].copy()
+)
 
 if escolhido_opcao != "Todos":
     filtro = filtro & (df["ESCOLHIDO"] == escolhido_opcao)
