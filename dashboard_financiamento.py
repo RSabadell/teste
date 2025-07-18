@@ -112,7 +112,8 @@ g = sns.FacetGrid(
     height=4,
     aspect=1.4,
     sharex=True,
-    sharey=True
+    sharey=True,
+    legend_out=False 
 )
 
 g.map_dataframe(
