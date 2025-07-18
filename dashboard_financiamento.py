@@ -64,11 +64,12 @@ df_filtered = df[
 # Discretização ordenada
 for var in ["CARENCIA", "QTD_PARCELA"]:
     ordenado = sorted(df_filtered[var].dropna().unique().astype(int))
+    df_filtered = df_filtered[df_filtered[var].notna()]  # remove temporariamente nulos
     df_filtered[f"{var}_LABEL"] = pd.Categorical(
         df_filtered[var].astype(int).astype(str),
         categories=[str(x) for x in ordenado],
         ordered=True
-    )
+)
 
 # Métricas agregadas por banco
 st.subheader("📌 Resumo por Banco Vencedor")
