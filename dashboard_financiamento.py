@@ -112,7 +112,7 @@ g = sns.FacetGrid(
     height=4,
     aspect=1.4,
     sharex=True,
-    sharey=False
+    sharey=True
 )
 
 g.map_dataframe(
@@ -129,6 +129,7 @@ g.map_dataframe(
 
 g.set_axis_labels(var_hist.replace("_", " ").title(), "Frequência")
 g.set_titles("ESCOLHIDO = {col_name}")
+g.add_legend(title="Banco") 
 g.tight_layout()
 
 st.pyplot(g.fig)
