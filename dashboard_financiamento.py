@@ -50,13 +50,17 @@ else:
     selected_ufs = selected_ufs_opcao
 
 
-df_filtered = df[
+filtro = df[
     (df["BANCO_VENCEDOR"].isin(selected_bancos)) &
     (df["VALOR_FINAL"] >= valor_range[0]) &
     (df["VALOR_FINAL"] <= valor_range[1]) &
-    (df["ESTADO"].isin(selected_ufs)) &
-    (df["ESCOLHIDO"] == escolhido_opcao if escolhido_opcao != "Todos" else None)
+    (df["ESTADO"].isin(selected_ufs))
 ].copy()
+
+if escolhido_opcao != "Todos":
+    filtro = filtro & (df["ESCOLHIDO"] == escolhido_opcao)
+
+df_filtered = df[filtro].copy()
 
 # Discretização ordenada
 for var in ["CARENCIA", "QTD_PARCELA"]:
