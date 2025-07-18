@@ -105,9 +105,18 @@ else:
     use_discrete = False
     kde = True
 
-fig2, ax2 = plt.subplots(figsize=(5, 3))
-sns.histplot(
-    data=df_filtered,
+# Usar FacetGrid para mostrar Sim/Não em colunas separadas
+g = sns.FacetGrid(
+    df_filtered,
+    col="ESCOLHIDO",
+    height=4,
+    aspect=1.4,
+    sharex=True,
+    sharey=False
+)
+
+g.map_dataframe(
+    sns.histplot,
     x=var_hist_plot,
     hue="BANCO_VENCEDOR",
     kde=kde,
@@ -115,10 +124,14 @@ sns.histplot(
     multiple=multiple_option,
     common_norm=common_norm,
     discrete=use_discrete,
-    alpha=0.6,
-    ax=ax2
+    alpha=0.6
 )
-st.pyplot(fig2)
+
+g.set_axis_labels(var_hist.replace("_", " ").title(), "Frequência")
+g.set_titles("ESCOLHIDO = {col_name}")
+g.tight_layout()
+
+st.pyplot(g.fig)
 
 st.subheader("🗺️ Análise Regional por Estado")
 
