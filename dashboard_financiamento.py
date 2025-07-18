@@ -55,7 +55,7 @@ df_filtered = df[
     (df["VALOR_FINAL"] >= valor_range[0]) &
     (df["VALOR_FINAL"] <= valor_range[1]) &
     (df["ESTADO"].isin(selected_ufs)) &
-    (df["ESCOLHIDO"] == escolhido_opcao)
+    (df["ESCOLHIDO"] == escolhido_opcao if escolhido_opcao != "Todos" else None)
 ].copy()
 
 # Discretização ordenada
